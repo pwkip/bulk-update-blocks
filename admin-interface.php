@@ -33,7 +33,7 @@ function bub_page_contents() {
 					'id' => 'bub-posts',
 					'label' => 'Posts to update',
 					'description' => 'Comma separated list of post. Can be a combination of IDs and post types',
-					'type' => 'textarea',
+					'type' => 'text',
 				],
 				[
 					'id' => 'bub-position',
@@ -83,7 +83,7 @@ function bub_page_contents() {
 					'id' => 'bub-block-to-delete',
 					'label' => 'Block to find',
 					'description' => 'Name of block to delete, including namespace. For example <code>core/paragraph</code>.<br>Will delete all occurences of this block.',
-					'type' => 'textarea',
+					'type' => 'text',
                 ],
                 [
 					'id' => 'bub-attrs',
@@ -95,7 +95,7 @@ function bub_page_contents() {
 					'id' => 'bub-posts',
 					'label' => 'Posts to update',
 					'description' => 'Comma separated list of post IDs and/or post types (use the exact slug)',
-					'type' => 'textarea',
+					'type' => 'text',
 				],
 			],
 			'submit' => 'Replace Blocks!',
@@ -108,7 +108,7 @@ function bub_page_contents() {
 					'id' => 'bub-block',
 					'label' => 'Block to look for',
 					'description' => 'Name of block to look for, including namespace. For example <code>core/paragraph</code>',
-					'type' => 'textarea',
+					'type' => 'text',
                 ],
                 [
 					'id' => 'bub-attrs',
@@ -120,7 +120,7 @@ function bub_page_contents() {
 					'id' => 'bub-posts',
 					'label' => 'Posts to include in search<br>(optional)',
 					'description' => 'Comma separated list of post IDs and/or post types (use the exact slug)',
-					'type' => 'textarea',
+					'type' => 'text',
 				],
 			],
 			'submit' => 'Find Posts!',
@@ -130,7 +130,7 @@ function bub_page_contents() {
 
 	?>
 		<style>
-			textarea {width: 100%;}
+			textarea, input[type=text] {width: 100%;}
 		</style>
 
 		<h1><?php esc_html_e( 'Bulk Update Blocks', 'bulk-update-blocks' ); ?></h1>
@@ -165,7 +165,8 @@ function bub_page_contents() {
 						data[key] = value;
 					}
 
-					console.log(data);
+					$('#bub-result').html('Busy. please wait...');
+
 					$.post(ajaxurl, data, function(response){
 						$('#bub-result').html(JSON.stringify(response, null, 2));
 					},'json');
@@ -219,6 +220,18 @@ function bub_render_input($field) {
 }
 
 function bub_get_post_IDs($posts_str) {
+
+	if ($posts_str == '') {
+		// get all posts
+		$post_ids = get_posts([
+			'post_type' => get_post_types(),
+			'post_status' => 'publish',
+			'numberposts' => -1,
+			'fields' => 'ids',
+		]);
+		return $post_ids;
+	}
+
 	$values = explode(',',$posts_str);
 	$post_ids = [];
 	foreach($values as $val) {
@@ -239,3 +252,4 @@ function bub_get_post_IDs($posts_str) {
 	}
 	return $post_ids;
 }
+

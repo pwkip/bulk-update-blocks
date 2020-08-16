@@ -34,7 +34,7 @@ function bub_ajax_insert_blocks() {
 add_action( 'wp_ajax_bub_delete_block', 'bub_ajax_delete_block' );
 function bub_ajax_delete_block() {
 
-    $block = stripslashes($_POST['bub-block-to-delete']);
+    $block = sanitize_text_field($_POST['bub-block-to-delete']);
     $attrs = json_decode(stripslashes($_POST['bub-attrs']),true);
     $attrs = is_array($attrs) ? $attrs : [];
 	$posts = sanitize_text_field($_POST['bub-posts']);
@@ -65,7 +65,7 @@ function bub_ajax_delete_block() {
 add_action( 'wp_ajax_bub_find_posts_containing_block', 'bub_ajax_find_posts_containing_block' );
 function bub_ajax_find_posts_containing_block() {
 
-    $block = stripslashes($_POST['bub-block']);
+    $block = sanitize_text_field($_POST['bub-block']);
     $attrs = json_decode(stripslashes($_POST['bub-attrs']),true);
     $attrs = is_array($attrs) ? $attrs : [];
 	$posts = sanitize_text_field($_POST['bub-posts']);
@@ -92,7 +92,7 @@ function bub_ajax_find_posts_containing_block() {
 add_action( 'wp_ajax_bub_replace_block', 'bub_ajax_replace_block' );
 function bub_ajax_replace_block() {
 
-	$block_to_find = stripslashes($_POST['bub-block-to-find']);
+	$block_to_find = sanitize_text_field($_POST['bub-block-to-find']);
     $attrs_to_find = json_decode(stripslashes($_POST['bub-attrs-to-find']),true);
     $attrs_to_find = is_array($attrs_to_find) ? $attrs_to_find : [];
 	$blocks_to_replace = stripslashes($_POST['bub-blocks-to-replace']);
