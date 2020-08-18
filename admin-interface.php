@@ -16,7 +16,7 @@ function bub_page_contents() {
 
 	global $wp;
 
-	$page_id = isset($_REQUEST['sub']) ? $_REQUEST['sub'] : 0;
+	$page_id = isset($_REQUEST['sub']) ? intval($_REQUEST['sub']) : 0;
 
 	$forms = [
 		[
