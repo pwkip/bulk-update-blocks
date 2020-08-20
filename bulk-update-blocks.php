@@ -28,6 +28,8 @@
  */
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
+require __DIR__ . '/vendor/autoload.php';
+
 include 'common.php';
 include 'insert-blocks.php';
 include 'delete-block.php';
@@ -35,3 +37,4 @@ include 'replace-block.php';
 include 'contains-block.php';
 include 'ajax.php';
 include 'admin-interface.php';
+include 'example-conversions.php';

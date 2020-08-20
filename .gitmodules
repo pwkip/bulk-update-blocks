@@ -1,3 +1,0 @@
-[submodule "vendor/mustache.php"]
-	path = vendor/mustache.php
-	url = https://github.com/bobthecow/mustache.php.git
