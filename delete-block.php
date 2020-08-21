@@ -1,9 +1,9 @@
 <?php
-function bub_delete_block($name, $attrs, $post_id) {
+function bub_delete_block($template, $post_id) {
     $blocks = bub_get_blocks_by_post_id($post_id);
     $updated_blocks = [];
     foreach($blocks as $block) {
-        if (!bub_block_is_a_match($block, $name, $attrs)) {
+        if (!bub_block_is_a_match($block, $template)) {
             $updated_blocks[] = $block;
         }
     }

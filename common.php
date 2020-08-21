@@ -49,7 +49,11 @@ function bub_update_blocks($post_id, $blocks) {
     return $success;
 }
 
-function bub_block_is_a_match($block, $name, $attrs) {
+function bub_block_is_a_match($block, $template) {
+
+    $name = $template[0];
+    $attrs = isset($template[1]) ? $template[1] : [];
+
     if ($block['blockName'] !== $name) {
         return false;
     }
@@ -62,4 +66,8 @@ function bub_block_is_a_match($block, $name, $attrs) {
         }
     }
     return true;
+}
+
+function bub_block_is_a_match_by_template($block, $template) {
+    return bub_block_is_a_match($block, $template[0],$template[1]);
 }

@@ -1,20 +1,28 @@
 <?php
-function bub_replace_block($name, $attrs, $post_id, $serialized_blocks_to_insert) {
+function bub_replace_block($template, $post_id, $serialized_blocks_to_insert, $replacement_func = 'bub_simple_replace') {
 
-    $blocks_to_insert = parse_blocks($serialized_blocks_to_insert);
-
-    // return if there were no blocks passed.
-    // If the intention was to replace a block with nothing,
-    // use bub_delete_block instead.
-    if ( 0 === count($blocks_to_insert) ) return false;
+    $serialized_blocks_to_insert = trim(preg_replace('/\s\s+/', ' ', $serialized_blocks_to_insert));
 
     $blocks = bub_get_blocks_by_post_id($post_id);
 
     foreach($blocks as $i => $block) {
-        if (bub_block_is_a_match($block, $name, $attrs)) {
+        if (bub_block_is_a_match($block, $template)) {
+            $html = call_user_func($replacement_func, $block, $serialized_blocks_to_insert);
+            $blocks_to_insert = parse_blocks($html);
             array_splice($blocks, $i, 1, $blocks_to_insert);
         }
     }
 
     return bub_update_blocks($post_id, $blocks);
+}
+
+/**
+ * Simply return the target HTML
+ *
+ * @param Array $src_block source block as assoc array
+ * @param string $target_html the new block HTML code
+ * @return void
+ */
+function bub_simple_replace($src_block, $target_html) {
+    return $target_html;
 }

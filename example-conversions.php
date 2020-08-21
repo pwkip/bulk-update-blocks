@@ -71,6 +71,6 @@ ob_start();
 <?php
 $target_template = trim(ob_get_clean());
 
-echo '<pre>'.htmlentities(bub_convert_block($src_block, $target_template)).'</pre>';
+//echo '<pre>'.htmlentities(bub_convert_block($src_block, $target_template)).'</pre>';
 
-wp_die();
+//wp_die();

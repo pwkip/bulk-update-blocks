@@ -31,8 +31,8 @@ function bub_page_contents() {
 				],
 				[
 					'id' => 'bub-posts',
-					'label' => 'Posts to update',
-					'description' => 'Comma separated list of post. Can be a combination of IDs and post types',
+					'label' => 'Posts to include in search<br>(optional)',
+					'description' => 'Comma separated list of post IDs and/or post types (use the exact slug)',
 					'type' => 'text',
 				],
 				[
@@ -49,16 +49,10 @@ function bub_page_contents() {
 			'title' => 'Replace block',
 			'fields' => [
 				[
-					'id' => 'bub-block-to-find',
+					'id' => 'bub-block',
 					'label' => 'Block to find',
-					'description' => 'Name of block to replace, including namespace. For example <code>core/paragraph</code> or <code>xyz/myblock</code>.<br>Will replace all occurences of this block.',
+					'description' => 'Template of block to replace. For example <code>[ "core/paragraph" , {"dropCap":true} ]</code>. Needs to be valid JSON.<br>Will replace all occurences of this block.',
 					'type' => 'text',
-				],
-				[
-					'id' => 'bub-attrs-to-find',
-					'label' => 'Attributes to find<br>(optional)',
-					'description' => 'Specify extra attributes the found block should have. Must be valid JSON. <code>{"type":"my-type"}</code>',
-					'type' => 'textarea',
 				],
 				[
 					'id' => 'bub-blocks-to-replace',
@@ -67,10 +61,17 @@ function bub_page_contents() {
 					'type' => 'textarea',
 				],
 				[
+					'id' => 'bub-replacement-function',
+					'label' => 'Replacement-function',
+					'description' => 'You can create additional replacement functions.',
+					'type' => 'select',
+					'options' => bub_get_replacement_functions(),
+				],
+				[
 					'id' => 'bub-posts',
-					'label' => 'Posts to update',
+					'label' => 'Posts to include in search<br>(optional)',
 					'description' => 'Comma separated list of post IDs and/or post types (use the exact slug)',
-					'type' => 'textarea',
+					'type' => 'text',
 				],
 			],
 			'submit' => 'Replace Blocks!',
@@ -80,25 +81,19 @@ function bub_page_contents() {
 			'title' => 'Delete block',
 			'fields' => [
 				[
-					'id' => 'bub-block-to-delete',
+					'id' => 'bub-block',
 					'label' => 'Block to find',
-					'description' => 'Name of block to delete, including namespace. For example <code>core/paragraph</code>.<br>Will delete all occurences of this block.',
+					'description' => 'Template of block to delete. For example <code>[ "core/paragraph" , {"dropCap":true} ]</code>. Needs to be valid JSON.<br>Will delete all occurences of this block.',
 					'type' => 'text',
                 ],
-                [
-					'id' => 'bub-attrs',
-					'label' => 'Attributes<br>(optional)',
-					'description' => 'Specify extra attributes the block should have, in order for it to be deleted. Must be valid JSON. <code>{"type":"my-type"}</code>',
-					'type' => 'textarea',
-				],
 				[
 					'id' => 'bub-posts',
-					'label' => 'Posts to update',
+					'label' => 'Posts to include in search<br>(optional)',
 					'description' => 'Comma separated list of post IDs and/or post types (use the exact slug)',
 					'type' => 'text',
 				],
 			],
-			'submit' => 'Replace Blocks!',
+			'submit' => 'Delete Blocks!',
 		],
 		[
 			'id' => 'bub_find_posts_containing_block',
@@ -107,15 +102,9 @@ function bub_page_contents() {
 				[
 					'id' => 'bub-block',
 					'label' => 'Block to look for',
-					'description' => 'Name of block to look for, including namespace. For example <code>core/paragraph</code>',
+					'description' => 'Template of block to look for. For example <code>[ "core/paragraph" , {"dropCap":true} ]</code>. Needs to be valid JSON.',
 					'type' => 'text',
                 ],
-                [
-					'id' => 'bub-attrs',
-					'label' => 'Attributes<br>(optional)',
-					'description' => 'Specify extra attributes the block should have. Must be valid JSON. <code>{"type":"my-type"}</code>',
-					'type' => 'textarea',
-				],
 				[
 					'id' => 'bub-posts',
 					'label' => 'Posts to include in search<br>(optional)',
@@ -212,7 +201,16 @@ function bub_render_field($field) {
 function bub_render_input($field) {
 	$id = $field['id'];
 	$type = $field['type'];
-	if ($type == 'textarea') {
+	if ($type == 'select') {
+		$options = $field['options'];
+		?>
+		<select <?php echo "name=\"{$id}\" id=\"{$id}\"" ?>>
+			<?php foreach ($options as $opt) { ?>
+				<option value="<?php echo $opt[1] ?>"><?php echo $opt[0] ?></option>
+			<?php } ?>
+		</select>
+		<?php
+	} else if ($type == 'textarea') {
 		echo "<textarea name=\"{$id}\" id=\"{$id}\"></textarea>";
 	} else {
 		echo "<input type=\"{$type}\" name=\"{$id}\" id=\"{$id}\" />";
@@ -253,3 +251,7 @@ function bub_get_post_IDs($posts_str) {
 	return $post_ids;
 }
 
+
+function bub_get_replacement_functions() {
+	return apply_filters('bub_replacement_functions', [ ['simple', 'bub_simple_replace'] ]);
+}
