@@ -5,12 +5,21 @@ function bub_replace_block($template, $post_id, $serialized_blocks_to_insert, $r
 
     $blocks = bub_get_blocks_by_post_id($post_id);
 
+    $has_changes = false;
+
     foreach($blocks as $i => $block) {
         if (bub_block_is_a_match($block, $template)) {
             $html = call_user_func($replacement_func, $block, $serialized_blocks_to_insert);
             $blocks_to_insert = parse_blocks($html);
-            array_splice($blocks, $i, 1, $blocks_to_insert);
+            if ($blocks_to_insert != [$block]) {
+                $has_changes = true;
+                array_splice($blocks, $i, 1, $blocks_to_insert);
+            }
         }
+    }
+
+    if (!$has_changes) {
+        return false;
     }
 
     return bub_update_blocks($post_id, $blocks);

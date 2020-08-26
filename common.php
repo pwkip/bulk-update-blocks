@@ -39,7 +39,13 @@ function bub_update_blocks($post_id, $blocks) {
 
     setup_postdata($post);
 
-    $post->post_content = serialize_blocks($blocks);
+    $serialized_blocks = serialize_blocks($blocks);
+
+    if ($post->post_content == $serialized_blocks) {
+        return false; // no need to update
+    }
+    
+    $post->post_content = $serialized_blocks;
    
     // Update the post into the database
     $success = wp_update_post( $post );
