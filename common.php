@@ -55,23 +55,48 @@ function bub_update_blocks($post_id, $blocks) {
     return $success;
 }
 
-function bub_block_is_a_match($block, $template) {
+function bub_block_is_a_match($block, $template, $depth = 0) {
 
     $name = $template[0];
-    $attrs = isset($template[1]) ? $template[1] : [];
 
-    if ($block['blockName'] !== $name) {
-        return false;
+    // first check if the current block is a match
+
+    if ( $block['blockName'] === $name) {
+
+        $attrs = isset($template[1]) ? $template[1] : [];
+
+        $all_atts_match = true;
+
+        foreach ($attrs as $attr_name => $attr_val) {
+            if (
+                !in_array($attr_name, array_keys($block['attrs'])) ||
+                $block['attrs'][$attr_name] != $attr_val
+            ) {
+                $all_atts_match = false;
+                break;
+            }
+        }
+
+        if ($all_atts_match) {
+            return true;
+        }
+
     }
-    foreach ($attrs as $attr_name => $attr_val) {
-        if (
-            !in_array($attr_name, array_keys($block['attrs'])) ||
-            $block['attrs'][$attr_name] != $attr_val
-        ) {
-            return false;
+
+    // then check all innerBlocks
+
+    if ($depth !== 0) {
+        foreach ($block['innerBlocks'] as $innerBlock) {
+            $is_match = bub_block_is_a_match($innerBlock, $template, $depth-1);
+            if ($is_match) {
+                return true;
+            }
         }
     }
-    return true;
+
+    // if we reach this point, there's no match
+
+    return false;
 }
 
 function bub_block_is_a_match_by_template($block, $template) {

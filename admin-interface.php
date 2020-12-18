@@ -111,6 +111,12 @@ function bub_page_contents() {
 					'description' => 'Comma separated list of post IDs and/or post types (use the exact slug)',
 					'type' => 'text',
 				],
+				[
+					'id' => 'bub-depth',
+					'label' => 'Depth',
+					'description' => "how many levels deep should we dive? -1 means inifinte (default). 0 means don't check innerBlocks.",
+					'type' => 'number',
+				],
 			],
 			'submit' => 'Find Posts!',
 		],

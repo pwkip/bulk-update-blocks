@@ -67,12 +67,15 @@ function bub_ajax_find_posts_containing_block() {
     $block_template = json_decode(stripslashes($_POST['bub-block']),true);
 	$posts = sanitize_text_field($_POST['bub-posts']);
 
+	$depth = trim(sanitize_text_field($_POST['bub-depth']));
+	$depth = $depth === '' ? -1 : intval($depth);
+
 	$post_ids = bub_get_post_IDs($posts);	
 
 	$found_posts = [];
 
 	foreach($post_ids as $post_id) {
-		$found = bub_contains_block($block_template, $post_id);
+		$found = bub_contains_block($block_template, $post_id, $depth);
 
 		if ($found) {
 			$found_posts[] = $post_id;
