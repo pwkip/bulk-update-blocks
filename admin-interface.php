@@ -226,13 +226,14 @@ function bub_render_input($field) {
 function bub_get_post_IDs($posts_str) {
 
 	if ($posts_str == '') {
-		// get all posts
-		$post_ids = get_posts([
-			'post_type' => get_post_types(),
+		// get all posts (all custom post types + post + page. Don't include any other builtin post types)
+		$args = [
+			'post_type' => array_values(array_merge(get_post_types(['_builtin' => false]), [ 'post', 'page' ])),
 			'post_status' => 'publish',
 			'numberposts' => -1,
 			'fields' => 'ids',
-		]);
+		];
+		$post_ids = get_posts($args);
 		return $post_ids;
 	}
 
